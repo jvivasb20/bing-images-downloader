@@ -10,7 +10,7 @@ def validate_dir(dirname):
         print(f'Dataset directory: {dirname}')
     else:
         print("There was an error with the dataset directory")
-        print("Please. Try again using other query string or limit.")
+        print("Please try again using other query string or limit.")
         exit(1)
 
 
