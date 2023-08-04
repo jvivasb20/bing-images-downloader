@@ -2,6 +2,7 @@ import math
 import os
 
 import cv2
+import inquirer
 from bing_image_downloader import downloader
 
 # TODO: add a readme file (how to use the script, how to install the dependencies, how to run the script)
@@ -16,14 +17,20 @@ IMAGE_FORMATS = [
 
 BANNER_RATIOS = [
     '16:9',
-
+    '1920:883'
+    '19:10',
+    '853:480',
+    '320:183',
+    '150:89'
 ]
 
-COVER_DIMENSIONS = [
-    '400x600',
-    '500x750',
-    '600x900',
-    '800x1200'
+COVER_RATIOS = [
+    '4:3',
+    '2:3'
+    '27:40'
+    '1:1'
+    '750:1061'
+
 ]
 
 TOLERANCE = 150
@@ -38,9 +45,10 @@ def validate_dir(dirname):
         exit(1)
 
 
-def download_images(query_string, limit):
+def download_images(media_type, query_string, limit):
     output_dir = f'{DATASET_DIR}/{query_string}'
-    downloader.download(query_string, limit=limit,  output_dir='dataset',
+
+    downloader.download(f'{query_string} {media_type}', limit=limit,  output_dir='dataset',
                         adult_filter_off=True, force_replace=False, timeout=60, verbose=True)
     validate_dir(output_dir)
     process_images(output_dir, limit)
@@ -101,9 +109,18 @@ def process_images(output_dir, count):
 
 if __name__ == '__main__':
     try:
-        query_string = input("Enter the query string: ")
+
+        questions = [
+            inquirer.List('media_type',
+                          message="Select the media type",
+                          choices=['Movie', 'Serie'],
+                          ),
+        ]
+        answers = inquirer.prompt(questions)
+        media_type = answers['media_type']
+        query_string = input(f'Enter the {media_type} name: ')
         limit = int(input("Enter the number of images to download: "))
-        download_images(query_string, limit)
+        download_images(media_type, query_string, limit)
 
     except Exception as e:
         if (e.__class__.__name__ == 'ValueError'):
